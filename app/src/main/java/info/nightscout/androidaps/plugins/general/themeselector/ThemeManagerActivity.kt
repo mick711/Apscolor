@@ -9,7 +9,6 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,6 +20,8 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager
 import info.nightscout.androidaps.MainActivity
 import info.nightscout.androidaps.R
+import info.nightscout.androidaps.databinding.ThemeselectorBottomSheetBinding
+import info.nightscout.androidaps.databinding.ThemeselectorScrollingFragmentBinding
 import info.nightscout.androidaps.plugins.general.colorpicker.CustomFlag
 import info.nightscout.androidaps.plugins.general.themeselector.adapter.RecyclerViewClickListener
 import info.nightscout.androidaps.plugins.general.themeselector.adapter.ThemeAdapter
@@ -29,12 +30,18 @@ import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.T
 import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.getThemeId
 import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.themeList
 import info.nightscout.androidaps.plugins.general.themeselector.view.ThemeView
-import info.nightscout.androidaps.utils.sharedPreferences.SP
-import kotlinx.android.synthetic.main.themeselector_bottom_sheet.*
-import kotlinx.android.synthetic.main.themeselector_scrolling_fragment.*
+import kotlinx.android.synthetic.main.themeselector_bottom_sheet.view.*
 import java.util.*
 
 class ThemeManagerActivity : MainActivity(), View.OnClickListener {
+
+    private var _binding: ThemeselectorBottomSheetBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding_bottomsheet get() = _binding!!
+
+    private lateinit var binding: ThemeselectorScrollingFragmentBinding
 
     companion object {
         var mThemeList: MutableList<Theme> = ArrayList()
@@ -48,9 +55,13 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
     private var actualTheme = 0
     private var mAdapter: ThemeAdapter? = null
     private var mBottomSheetBehavior: BottomSheetBehavior<*>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.themeselector_scrolling_fragment)
+
+        binding = ThemeselectorScrollingFragmentBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initBottomSheet()
         prepareThemeData()
         actualTheme = spSplash.getInt("theme", THEME_DARKSIDE)
@@ -76,16 +87,16 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
         if ( spSplash.getBoolean("daynight", true)) {
             val cd = ColorDrawable(spSplash.getInt("darkBackgroundColor", info.nightscout.androidaps.core.R.color.background_dark))
             if ( !spSplash.getBoolean("backgroundcolor", true)) {
-                scrollingactivity.background =  cd
+                binding.scrollingactivity.background =  cd
             } else {
-                scrollingactivity.background =  drawable
+                binding.scrollingactivity.background =  drawable
             }
         } else {
             val cd = ColorDrawable(spSplash.getInt("lightBackgroundColor", info.nightscout.androidaps.core.R.color.background_light))
             if ( !spSplash.getBoolean("backgroundcolor", true)) {
-                scrollingactivity.background =  cd
+                binding.scrollingactivity.background =  cd
             } else {
-                scrollingactivity.background =  drawable
+                binding.scrollingactivity.background =  drawable
             }
         }
     }
@@ -94,18 +105,16 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
     private fun initBottomSheet() {
         val nightMode = spSplash.getBoolean("daynight", true)
         // init the bottom sheet behavior
-        mBottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        mBottomSheetBehavior = BottomSheetBehavior.from( binding_bottomsheet.bottomSheet)
         val backGround = spSplash.getBoolean("backgroundcolor", true)
-        val switchCompatBackground = findViewById<SwitchCompat>(R.id.switch_backgroundimage)
-        switchCompatBackground.isChecked = backGround
-        switchCompatBackground.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+        binding_bottomsheet.bottomSheet.switch_backgroundimage.isChecked = backGround
+        binding_bottomsheet.bottomSheet.switch_backgroundimage.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             spSplash.putBoolean("backgroundcolor", b)
             val delayTime = 200
             compoundButton.postDelayed(Runnable { changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
         }
-        val switchCompat = findViewById<SwitchCompat>(R.id.switch_dark_mode)
-        switchCompat.isChecked = nightMode
-        switchCompat.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
+        binding_bottomsheet.bottomSheet.switch_dark_mode.isChecked = nightMode
+        binding_bottomsheet.bottomSheet.switch_dark_mode.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             spSplash.putBoolean("daynight", b)
             var delayTime = 200
             if ((mBottomSheetBehavior as BottomSheetBehavior<*>).getState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -123,23 +132,23 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
                 }
             }, delayTime.toLong())
         }
-        select_backgroundcolordark.setBackgroundColor(spSplash.getInt("darkBackgroundColor", ContextCompat.getColor(this, info.nightscout.androidaps.core.R.color.background_dark)))
-        select_backgroundcolorlight.setBackgroundColor(spSplash.getInt("lightBackgroundColor", ContextCompat.getColor(this, info.nightscout.androidaps.core.R.color.background_light)))
-        select_backgroundcolordark.setOnClickListener(View.OnClickListener { selectColor("dark") })
-        select_backgroundcolorlight.setOnClickListener(View.OnClickListener { selectColor("light") })
+        binding_bottomsheet.bottomSheet.select_backgroundcolordark.setBackgroundColor(spSplash.getInt("darkBackgroundColor", ContextCompat.getColor(this, info.nightscout.androidaps.core.R.color.background_dark)))
+        binding_bottomsheet.bottomSheet.select_backgroundcolorlight.setBackgroundColor(spSplash.getInt("lightBackgroundColor", ContextCompat.getColor(this, info.nightscout.androidaps.core.R.color.background_light)))
+        binding_bottomsheet.bottomSheet.select_backgroundcolordark.setOnClickListener(View.OnClickListener { selectColor("dark") })
+        binding_bottomsheet.bottomSheet.select_backgroundcolorlight.setOnClickListener(View.OnClickListener { selectColor("light") })
 
-        setDefaultColorDark?.setOnClickListener(View.OnClickListener {
+        binding_bottomsheet.bottomSheet.setDefaultColorDark?.setOnClickListener(View.OnClickListener {
             spSplash.putInt("darkBackgroundColor", ContextCompat.getColor(this, R.color.background_dark))
-            select_backgroundcolordark!!.setBackgroundColor(getColor((R.color.background_dark)))
+            binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.setBackgroundColor(getColor((R.color.background_dark)))
             val delayTime = 200
-            select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+            binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
         })
 
-        setDefaultColorLight?.setOnClickListener(View.OnClickListener {
+        binding_bottomsheet.bottomSheet.setDefaultColorLight?.setOnClickListener(View.OnClickListener {
             spSplash.putInt("lightBackgroundColor", ContextCompat.getColor(this, R.color.background_light))
-            select_backgroundcolorlight!!.setBackgroundColor(getColor((R.color.background_light)))
+            binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.setBackgroundColor(getColor((R.color.background_light)))
             val delayTime = 200
-            select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+            binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
         })
 
         mAdapter = ThemeAdapter(spSplash, mThemeList, object : RecyclerViewClickListener {
@@ -153,9 +162,9 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
             }
         })
         val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(applicationContext, 3)
-        recyclerView.setLayoutManager(mLayoutManager)
-        recyclerView.setItemAnimator(DefaultItemAnimator())
-        recyclerView.setAdapter(mAdapter)
+        binding_bottomsheet.bottomSheet.recyclerView.setLayoutManager(mLayoutManager)
+        binding_bottomsheet.bottomSheet.recyclerView.setItemAnimator(DefaultItemAnimator())
+        binding_bottomsheet.bottomSheet.recyclerView.setAdapter(mAdapter)
     }
 
     private fun prepareThemeData() {
@@ -182,14 +191,14 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
                 ColorEnvelopeListener { envelope, _ -> //setLayoutColor(envelope);
                     if (lightOrDark === "light") {
                         spSplash.putInt("lightBackgroundColor", envelope.color)
-                        select_backgroundcolorlight!!.setBackgroundColor(envelope.color)
+                        binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.setBackgroundColor(envelope.color)
                         val delayTime = 200
-                        select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+                        binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
                     } else if (lightOrDark === "dark") {
                         spSplash.putInt("darkBackgroundColor", envelope.color)
-                        select_backgroundcolordark!!.setBackgroundColor(envelope.color)
+                        binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.setBackgroundColor(envelope.color)
                         val delayTime = 200
-                        select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+                        binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
                     }
                 })
             .setNegativeButton(getString(R.string.cancel)
