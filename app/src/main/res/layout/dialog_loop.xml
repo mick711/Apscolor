@@ -7,6 +7,7 @@
     android:focusableInTouchMode="true"
     android:minWidth="300dp"
     android:orientation="vertical"
+    android:background="?attr/fragmentbackground"
     tools:context=".dialogs.LoopDialog">
 
     <LinearLayout

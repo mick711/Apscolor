@@ -2,6 +2,9 @@ package info.nightscout.androidaps.dialogs
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -9,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import dagger.android.support.DaggerDialogFragment
 import info.nightscout.androidaps.R
@@ -22,6 +26,7 @@ import info.nightscout.androidaps.plugins.bus.RxBusWrapper
 import info.nightscout.androidaps.plugins.configBuilder.ConfigBuilderPlugin
 import info.nightscout.androidaps.plugins.configBuilder.ConstraintChecker
 import info.nightscout.androidaps.plugins.constraints.objectives.ObjectivesPlugin
+import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil
 import info.nightscout.androidaps.queue.Callback
 import info.nightscout.androidaps.utils.FabricPrivacy
 import info.nightscout.androidaps.utils.ToastUtils
@@ -75,6 +80,29 @@ class LoopDialog : DaggerDialogFragment() {
         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         isCancelable = true
         dialog?.setCanceledOnTouchOutside(false)
+
+        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DEFAULT)
+        try {
+            val theme: Resources.Theme? = context?.getTheme()
+            // https://stackoverflow.com/questions/11562051/change-activitys-theme-programmatically
+            if (theme != null) {
+                theme.applyStyle(ThemeUtil.getThemeId(themeToSet), true)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        val drawable: Drawable? = context?.let { ContextCompat.getDrawable(it, R.drawable.dialog) }
+        if ( sp.getBoolean("daynight", true)) {
+            if (drawable != null) {
+                drawable.setColorFilter(sp.getInt("darkBackgroundColor", info.nightscout.androidaps.core.R.color.background_dark), PorterDuff.Mode.SRC_IN)
+            }
+        } else {
+            if (drawable != null) {
+                drawable.setColorFilter(sp.getInt("lightBackgroundColor", info.nightscout.androidaps.core.R.color.background_light), PorterDuff.Mode.SRC_IN)
+            }
+        }
+        dialog?.window?.setBackgroundDrawable(drawable)
 
         _binding = DialogLoopBinding.inflate(inflater, container, false)
         return binding.root
