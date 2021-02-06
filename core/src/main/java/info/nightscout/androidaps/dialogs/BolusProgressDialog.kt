@@ -80,7 +80,7 @@ class BolusProgressDialog : DaggerDialogFragment() {
         isCancelable = false
         dialog?.setCanceledOnTouchOutside(false)
 
-        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DARKSIDE)
+        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DEFAULT)
         try {
             val theme: Resources.Theme? = context?.theme
             // https://stackoverflow.com/questions/11562051/change-activitys-theme-programmatically

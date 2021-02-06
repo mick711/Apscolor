@@ -26,7 +26,7 @@ import info.nightscout.androidaps.plugins.general.colorpicker.CustomFlag
 import info.nightscout.androidaps.plugins.general.themeselector.adapter.RecyclerViewClickListener
 import info.nightscout.androidaps.plugins.general.themeselector.adapter.ThemeAdapter
 import info.nightscout.androidaps.plugins.general.themeselector.model.Theme
-import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.THEME_DARKSIDE
+import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.THEME_DEFAULT
 import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.getThemeId
 import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.themeList
 import info.nightscout.androidaps.plugins.general.themeselector.view.ThemeView
@@ -64,7 +64,7 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
 
         initBottomSheet()
         prepareThemeData()
-        actualTheme = spSplash.getInt("theme", THEME_DARKSIDE)
+        actualTheme = spSplash.getInt("theme", THEME_DEFAULT)
         val themeView = findViewById<ThemeView>(R.id.theme_selected)
         themeView.setTheme(mThemeList[actualTheme], actualTheme)
         setBackground()
@@ -111,7 +111,7 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
         binding_bottomsheet.bottomSheet.switch_backgroundimage.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             spSplash.putBoolean("backgroundcolor", b)
             val delayTime = 200
-            compoundButton.postDelayed(Runnable { changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+            compoundButton.postDelayed(Runnable { changeTheme(spSplash.getInt("theme", THEME_DEFAULT)) }, delayTime.toLong())
         }
         binding_bottomsheet.bottomSheet.switch_dark_mode.isChecked = nightMode
         binding_bottomsheet.bottomSheet.switch_dark_mode.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
@@ -128,7 +128,7 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
                     } else {
                         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
                     }
-                    changeTheme(spSplash.getInt("theme", THEME_DARKSIDE))
+                    changeTheme(spSplash.getInt("theme", THEME_DEFAULT))
                 }
             }, delayTime.toLong())
         }
@@ -141,14 +141,14 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
             spSplash.putInt("darkBackgroundColor", ContextCompat.getColor(this, R.color.background_dark))
             binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.setBackgroundColor(getColor((R.color.background_dark)))
             val delayTime = 200
-            binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+            binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DEFAULT)) }, delayTime.toLong())
         })
 
         binding_bottomsheet.bottomSheet.setDefaultColorLight?.setOnClickListener(View.OnClickListener {
             spSplash.putInt("lightBackgroundColor", ContextCompat.getColor(this, R.color.background_light))
             binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.setBackgroundColor(getColor((R.color.background_light)))
             val delayTime = 200
-            binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+            binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DEFAULT)) }, delayTime.toLong())
         })
 
         mAdapter = ThemeAdapter(spSplash, mThemeList, object : RecyclerViewClickListener {
@@ -193,12 +193,12 @@ class ThemeManagerActivity : MainActivity(), View.OnClickListener {
                         spSplash.putInt("lightBackgroundColor", envelope.color)
                         binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.setBackgroundColor(envelope.color)
                         val delayTime = 200
-                        binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+                        binding_bottomsheet.bottomSheet.select_backgroundcolorlight!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DEFAULT)) }, delayTime.toLong())
                     } else if (lightOrDark === "dark") {
                         spSplash.putInt("darkBackgroundColor", envelope.color)
                         binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.setBackgroundColor(envelope.color)
                         val delayTime = 200
-                        binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DARKSIDE)) }, delayTime.toLong())
+                        binding_bottomsheet.bottomSheet.select_backgroundcolordark!!.postDelayed({ changeTheme(spSplash.getInt("theme", THEME_DEFAULT)) }, delayTime.toLong())
                     }
                 })
             .setNegativeButton(getString(R.string.cancel)

@@ -30,7 +30,7 @@ class SingleFragmentActivity : DaggerAppCompatActivityWithResult() {
         setContentView(R.layout.activity_single_fragment)
 
         // Important to set theme here
-        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DARKSIDE)
+        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DEFAULT)
         try {
             setTheme(themeToSet)
             // https://stackoverflow.com/questions/11562051/change-activitys-theme-programmatically

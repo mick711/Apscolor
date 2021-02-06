@@ -15,7 +15,7 @@ open class NoSplashAppCompatActivity : DaggerAppCompatActivityWithResult() {
     @Inject lateinit var spSplash: SP
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var themeToSet = spSplash.getInt("theme", ThemeUtil.THEME_DARKSIDE)
+        var themeToSet = spSplash.getInt("theme", ThemeUtil.THEME_DEFAULT)
         try {
             setTheme(themeToSet)
             val theme = super.getTheme()

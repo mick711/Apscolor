@@ -54,7 +54,7 @@ import info.nightscout.androidaps.plugins.constraints.versionChecker.VersionChec
 import info.nightscout.androidaps.plugins.general.nsclient.data.NSSettingsStatus
 import info.nightscout.androidaps.plugins.general.smsCommunicator.SmsCommunicatorPlugin
 import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil
-import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.THEME_DARKSIDE
+import info.nightscout.androidaps.plugins.general.themeselector.util.ThemeUtil.THEME_DEFAULT
 import info.nightscout.androidaps.setupwizard.SetupWizardActivity
 import info.nightscout.androidaps.utils.AndroidPermission
 import info.nightscout.androidaps.utils.FabricPrivacy
@@ -152,8 +152,8 @@ open class MainActivity : NoSplashAppCompatActivity() {
             delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
         }
         delegate.applyDayNight()
-        setTheme(ThemeUtil.getThemeId(sp.getInt("theme", THEME_DARKSIDE)))
-        ThemeUtil.setActualTheme(ThemeUtil.getThemeId(sp.getInt("theme", THEME_DARKSIDE)))
+        setTheme(ThemeUtil.getThemeId(sp.getInt("theme", THEME_DEFAULT)))
+        ThemeUtil.setActualTheme(ThemeUtil.getThemeId(sp.getInt("theme", THEME_DEFAULT)))
         Iconify.with(FontAwesomeModule())
         LocaleHelper.update(applicationContext)
         binding = ActivityMainBinding.inflate(layoutInflater)

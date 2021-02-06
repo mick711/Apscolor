@@ -114,7 +114,7 @@ class WizardDialog : DaggerDialogFragment() {
         isCancelable = true
         dialog?.setCanceledOnTouchOutside(false)
 
-        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DARKSIDE)
+        val themeToSet = sp.getInt("theme", ThemeUtil.THEME_DEFAULT)
         try {
             val theme: Resources.Theme? = context?.getTheme()
             // https://stackoverflow.com/questions/11562051/change-activitys-theme-programmatically
